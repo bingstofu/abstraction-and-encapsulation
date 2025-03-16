@@ -96,7 +96,7 @@ bool isValidName(const string &name) {
 // Improved function for getting valid menu choice
 int getValidMenuChoice() {
     int choice;
-    while (true) {
+    do {
         cout << "\nMenu:\n";
         cout << "1 - Full-time Employee\n";
         cout << "2 - Part-time Employee\n";
@@ -111,10 +111,11 @@ int getValidMenuChoice() {
             cout << "Invalid choice! Please enter a number between 1 and 5.\n";
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        } else {
-            return choice;
         }
-    }
+
+    } while (choice < 1 || choice > 5 || cin.fail());
+
+    return choice;
 }
 
 bool isUniqueID(const string &id, Employee *employees[], int count) {
@@ -146,7 +147,7 @@ int main() {
 
         if (choice == 5) {
             running = false;
-            continue;
+            break;  // Ensures immediate exit
         }
 
         if (choice == 4) {
@@ -171,17 +172,17 @@ int main() {
             cout << "Enter ID: ";
             cin >> id;
             if (!isUniqueID(id, employees, empCount)) {
-                cout << "Invalid input! Please try again.\n";
+                cout << "ID already exists! Please enter a unique ID.\n";
             }
         } while (!isUniqueID(id, employees, empCount));
 
         // Input Name with validation
+        cin.ignore();  // Ensure no leftover newline character
         do {
             cout << "Enter Name: ";
-            cin.ignore();
             getline(cin, name);
             if (!isValidName(name)) {
-                cout << "Invalid input! Please try again.\n";
+                cout << "Invalid input! Please enter a valid name.\n";
             }
         } while (!isValidName(name));
 
@@ -190,7 +191,7 @@ int main() {
             cout << "Enter Salary: ";
             cin >> salaryStr;
             if (!isValidSalary(salaryStr)) {
-                cout << "Invalid input! Please try again.\n";
+                cout << "Invalid input! Please enter a valid positive salary.\n";
             }
         } while (!isValidSalary(salaryStr));
         salary = stod(salaryStr);
@@ -201,7 +202,7 @@ int main() {
                 cout << "Enter " << (choice == 2 ? "Hours Worked" : "Number of Projects") << ": ";
                 cin >> hoursOrProjects;
                 if (cin.fail() || hoursOrProjects <= 0) {
-                    cout << "Invalid input! Please try again.\n";
+                    cout << "Invalid input! Please enter a positive number.\n";
                     cin.clear();
                     cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 }
@@ -217,6 +218,7 @@ int main() {
         }
     }
 
+    // Cleanup allocated memory
     for (int i = 0; i < empCount; i++) {
         delete employees[i];
     }
